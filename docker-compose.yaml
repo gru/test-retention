@@ -22,7 +22,7 @@ services:
 
       # --- ВАЖНО: включаем ретеншн маленького размера ---
       KAFKA_LOG_RETENTION_BYTES: 1048576   # 1 МБ retention
-      KAFKA_LOG_SEGMENT_BYTES: 262144      # 256 KB сегменты — быстрее удаляются
+      KAFKA_LOG_SEGMENT_BYTES: 1048576      # 1 МБ сегменты
       KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 5000  # проверять каждые 5 секунд
 
       # Чтобы лог был очищен максимально быстро
