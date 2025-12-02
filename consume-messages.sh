@@ -54,7 +54,7 @@ done < <(
     kafka-console-consumer \
       --bootstrap-server "$BROKER" \
       --topic "$TOPIC" \
-      --from-beginning \
+      --group "8b047174-9f28-4150-b88e-e584b7101054" \
       --timeout-ms 5000
 )
 
