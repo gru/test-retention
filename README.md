@@ -9,7 +9,7 @@
 Поднимает Kafka и Zookeeper. Ключевые параметры:
 
 - `KAFKA_LOG_RETENTION_BYTES = 1048576` (1 МБ)
-- `KAFKA_LOG_SEGMENT_BYTES = 262144` (256 КБ сегменты)
+- `KAFKA_LOG_SEGMENT_BYTES = 1048576` (1 МБ сегменты)
 - `KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS = 5000`
 - Логирование удаления сегментов включено через:
   ```
