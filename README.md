@@ -49,6 +49,13 @@
 ### reset-kafka.sh
 Очищает окружение (контейнеры + volumes).
 
+### topic-info.sh
+Выводит информацию по топику
+```
+Topic: test-ret-bytes	TopicId: IksAO-wmREuDXSMg-fMGgg	PartitionCount: 1	ReplicationFactor: 1	Configs: segment.bytes=1048576,retention.bytes=10485760
+	Topic: test-ret-bytes	Partition: 0	Leader: 1	Replicas: 1	Isr: 1
+```
+
 ---
 
 ## 🧪 Сценарий теста №1
@@ -94,7 +101,6 @@ Deleted snapshot ...
 
 ## 🧪 Сценарий теста №2
 
-
 ### 1. Сбросить окружение
 ```
 ./reset-kafka.sh
@@ -113,7 +119,7 @@ docker compose up -d
 
 ### 4. Запустить producer записав около 15МБ данных
 ```
-./produce-messages.sh 20 test-ret-bytes
+./produce-messages.sh 15 test-ret-bytes
 ```
 
 ### 5. Consumer начнет читать данные
@@ -135,6 +141,43 @@ Total size: 9,02 MB
 Deleted log ... .log.deleted
 Deleted offset index ...
 Deleted snapshot ...
+```
+
+## 🧪 Сценарий теста №3
+
+### 1. Меняем строки в docker-compose.yaml: 
+```
+KAFKA_LOG_RETENTION_BYTES: 10485760   # 10 МБ retention
+KAFKA_LOG_SEGMENT_BYTES: 10485760      # 10 МБ сегменты
+```
+
+### 2. Сбросить окружение
+```
+./reset-kafka.sh
+docker compose up -d
+```
+
+### 3. Создать топик
+```
+./create-topic.sh
+```
+
+### 4. Запустить consumer в режиме чтения по 100 сообщений
+```
+./consume-messages.sh test-ret-bytes 100
+```
+
+### 5. Запустить producer записав около 10МБ данных
+```
+./produce-messages.sh 10 test-ret-bytes
+```
+
+### 6. Ждем пока consumer дочитает топик до конца
+Проверяем что все сообщения прочитаны:
+```
+Messages consumed: 10240
+Total bytes consumed: 10496000 bytes
+Total size: 10,01 MB
 ```
 
 ## 🎯 Итог
