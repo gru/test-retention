@@ -22,15 +22,10 @@ docker compose restart consumer
 
 wait_for_consumer_log "Consumer started."
 
-# Отправляем новое сообщение, так как из-за того, что consumer ссылается на несуществующий offset,
-# он не продолжает читать сразу.
-#echo "Producing 10MB of messages"
-#./produce-messages.sh 10
-
 # Ждём ошибок о том, что Offset out of range. Видим по логам, что чтение продолжилось с нового offset,
 # часть сообщений пропала.
 echo ""
-echo "Waiting for 'Offset out of range' in consumer logs. Press Ctrl + C to stop"
+echo "Waiting for 'Offset out of range' in consumer logs. Press Ctrl+C to cancel"
 wait_for_consumer_log "Offset out of range"
 
 
