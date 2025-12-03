@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -17,21 +16,36 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # Kafka listener settings
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
 
-      # --- ВАЖНО: включаем ретеншн маленького размера ---
-      KAFKA_LOG_RETENTION_BYTES: 1048576   # 1 МБ retention
-      KAFKA_LOG_SEGMENT_BYTES: 1048576      # 1 МБ сегменты
-      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 5000  # проверять каждые 5 секунд
+      # --- RETENTION small-size settings ---
+      KAFKA_LOG_RETENTION_BYTES: 1048576    # 1 MB retention
+      KAFKA_LOG_SEGMENT_BYTES: 1048576      # 1 MB segments
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 5000
 
-      # Чтобы лог был очищен максимально быстро
+      # Minimum replication
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
-       # --- ЛОГИРОВАНИЕ УДАЛЕНИЯ ДАННЫХ ---
-      # DEBUG уровень для Log и LogCleaner
+      # --- DEBUG logging for cleanup / segment deletion ---
       KAFKA_LOG4J_LOGGERS: "kafka.log.LogCleaner:DEBUG,kafka.log.Log:DEBUG"
-      # Root-логгер тоже в DEBUG
       KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+
+  consumer:
+    profiles: ["slow-consumer"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+    environment:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      KAFKA_TOPIC: "test-ret-bytes"
+      KAFKA_GROUP_ID: "slow-consumer-group"
+      BATCH_SIZE: "100"
+      SLEEP_MS: "1000"

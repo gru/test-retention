@@ -11,14 +11,14 @@
 
 set -e
 
-if [[ -z "$1" || -z "$2" ]]; then
+if [[ -z "$1" ]]; then
   echo "Usage: $0 <MB> <topic> [message_size_bytes] [broker]"
   exit 1
 fi
 
 MB=$1
-TOPIC=$2
-MSG_SIZE=${3:-1024}       # "размер сообщения" в байтах (примерно, без учёта \n)
+TOPIC=${2:-test-ret-bytes}
+MSG_SIZE=${3:-1024}       
 BROKER=${4:-localhost:9092}
 
 # Переводим MB → байты
