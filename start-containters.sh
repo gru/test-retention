@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+source ./wait-consumer-log.sh
+
 set -e
 
 COMPOSE_FILE="docker-compose.yaml"
@@ -48,11 +51,6 @@ docker exec -i "$KAFKA_CONTAINER" \
 echo ""
 echo "Starting slow-consumer..."
 docker compose --profile slow-consumer up -d
+wait_for_consumer_log "Consumer started."
 
-sleep 5
-
-echo ""
-echo "Consumer started."
-echo "Consumer Logs:"
-docker compose --profile slow-consumer logs consumer
 
